@@ -54,9 +54,8 @@ export const WorkCoachView: React.FC<WorkCoachProps> = ({ onAction }) => {
 
   const chatEndRef = useRef<HTMLDivElement>(null);
   
-  // Portal Targets
+  // Portal Target
   const seatElement = document.getElementById('claimant-seat');
-  const hudElement = document.getElementById('hud-header');
 
   useEffect(() => {
     loadNewClaimant();
@@ -239,36 +238,26 @@ export const WorkCoachView: React.FC<WorkCoachProps> = ({ onAction }) => {
       {/* PORTAL: Render Claimant in the Seat */}
       {seatElement && createPortal(ClaimantVisual, seatElement)}
 
-      {/* PORTAL: Render Header HUD in the Sky */}
-      {hudElement && createPortal(
-        <motion.div 
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          className="w-full bg-[#1d70b8] text-white p-4 flex justify-between items-center shadow-2xl rounded-xl pointer-events-auto border-4 border-black/20 backdrop-blur-md"
-        >
-           <div>
-              <h2 className="font-bold text-xl flex items-center gap-2">
-                <User size={24} /> {claimant.name} 
-                <span className="text-sm font-normal opacity-75 font-mono">({claimant.nino})</span>
-              </h2>
-              <p className="text-xs uppercase tracking-widest mt-1 opacity-80">
-                 {appointmentMode === 'FACE' ? 'In-Person Interview' : 'Telephone Assessment'}
-              </p>
-           </div>
-           <div className="text-right">
-              <div className={`px-3 py-1 rounded text-xs font-bold uppercase ${loading ? 'bg-yellow-400 text-black animate-pulse' : 'bg-green-500 text-white'}`}>
-                 {loading ? 'Claimant Speaking...' : 'Awaiting Input'}
-              </div>
-           </div>
-        </motion.div>,
-        hudElement
-      )}
-
       {/* SCREEN: The Work Coach Interface */}
       <div className="h-full w-full flex flex-col bg-[#f3f2f1] overflow-hidden relative">
          
-         {/* CASE STATUS WAS HERE - REMOVED */}
+         {/* Top Bar: Case Status */}
+         <div className="bg-[#1d70b8] text-white p-4 flex justify-between items-center shadow-md z-10 shrink-0">
+            <div>
+               <h2 className="font-bold text-xl flex items-center gap-2">
+                 <User size={24} /> {claimant.name} 
+                 <span className="text-sm font-normal opacity-75 font-mono">({claimant.nino})</span>
+               </h2>
+               <p className="text-xs uppercase tracking-widest mt-1 opacity-80">
+                  {appointmentMode === 'FACE' ? 'In-Person Interview' : 'Telephone Assessment'}
+               </p>
+            </div>
+            <div className="text-right">
+               <div className={`px-3 py-1 rounded text-xs font-bold uppercase ${loading ? 'bg-yellow-400 text-black animate-pulse' : 'bg-green-500 text-white'}`}>
+                  {loading ? 'Claimant Speaking...' : 'Awaiting Input'}
+               </div>
+            </div>
+         </div>
 
          <div className="flex-1 flex overflow-hidden">
             

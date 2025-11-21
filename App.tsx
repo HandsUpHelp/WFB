@@ -11,7 +11,7 @@ import { ShiftTimer } from './components/ShiftTimer';
 import { GlitchEffect } from './components/GlitchEffect';
 import { motion } from 'framer-motion';
 import { audioService } from './services/audioService';
-import { Eye, Monitor } from 'lucide-react';
+import { Eye, Monitor, Keyboard } from 'lucide-react';
 
 type POV = 'COMPUTER' | 'DESK';
 
@@ -156,15 +156,10 @@ const App: React.FC = () => {
     : 'translateX(-35%) translateY(0px) translateZ(100px) rotateX(0deg)';
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[#1a1a1a] perspective-[1000px] font-sans select-none flex flex-col">
+    <div className="h-screen w-screen overflow-hidden bg-[#1a1a1a] font-sans select-none flex flex-col">
       
-      {/* --- HUD HEADER LAYER (Fixed on top of screen, outside 3D world) --- */}
-      <div id="hud-header" className="fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-6xl z-[100] pointer-events-none flex justify-center">
-        {/* Content injected via Portal from Views */}
-      </div>
-
-      {/* --- 3D VIEWPORT (Fills remaining space above footer) --- */}
-      <div className="flex-1 relative overflow-hidden perspective-[1000px]">
+      {/* --- 3D VIEWPORT (FLEX GROW) --- */}
+      <div className="flex-1 relative perspective-[1000px] overflow-hidden">
         
         {/* --- THE WORLD CONTAINER --- */}
         <div 
@@ -218,9 +213,9 @@ const App: React.FC = () => {
             
             {/* Coffee Mug (Left side now) */}
             <div className="absolute top-[40%] left-[30%] w-16 h-16 rounded-full bg-[#1d70b8] shadow-lg flex items-center justify-center transform -translate-y-8">
-               <div className="w-14 h-14 rounded-full bg-[#3e3026] opacity-90" />
-               <div className="absolute -left-4 w-6 h-8 border-4 border-[#1d70b8] rounded-l-lg" />
-               <div className="absolute -top-10 opacity-40 animate-pulse w-8 h-16 bg-gradient-to-t from-white to-transparent blur-md" />
+              <div className="w-14 h-14 rounded-full bg-[#3e3026] opacity-90" />
+              <div className="absolute -left-4 w-6 h-8 border-4 border-[#1d70b8] rounded-l-lg" />
+              <div className="absolute -top-10 opacity-40 animate-pulse w-8 h-16 bg-gradient-to-t from-white to-transparent blur-md" />
             </div>
           </div>
 
@@ -231,18 +226,18 @@ const App: React.FC = () => {
             
             {/* Wrapper to hold screen + stand together */}
             <div 
-               className="relative pointer-events-auto transition-transform duration-700"
-               style={{
+              className="relative pointer-events-auto transition-transform duration-700"
+              style={{
                   // Slight rotation to face the user who sits center
                   transform: 'rotateY(-5deg)'
-               }}
+              }}
             >
               {/* MONITOR STAND */}
               <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 bg-gradient-to-b from-[#333] to-[#111] shadow-2xl z-0" />
               <div className="absolute -bottom-28 left-1/2 -translate-x-1/2 w-80 h-10 bg-[#111] rounded-full shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-0" />
 
               {/* MONITOR BEZEL */}
-              <div className="w-[85vw] h-[80vh] max-w-[1300px] bg-[#111] rounded-xl p-4 shadow-[0_0_0_1px_#333,0_30px_60px_rgba(0,0,0,0.9)] relative">
+              <div className="w-[85vw] h-[75vh] max-w-[1300px] bg-[#111] rounded-xl p-4 shadow-[0_0_0_1px_#333,0_30px_60px_rgba(0,0,0,0.9)] relative">
                 
                 {/* Branding */}
                 <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 text-gray-500 text-[10px] font-bold tracking-[0.4em] z-50">NECRO-SYNC</div>
@@ -250,10 +245,10 @@ const App: React.FC = () => {
 
                 {/* Post-it Note */}
                 <div className="absolute -left-6 bottom-20 w-24 h-24 bg-[#ffff88] shadow-lg -rotate-6 text-black p-2 text-xs leading-tight z-50 font-handwriting transform origin-top-right">
-                   <span className="font-bold block border-b border-black/20 mb-1">Targets:</span>
-                   Sanctions: 5<br/>
-                   Approvals: 20<br/>
-                   <span className="text-red-600 font-bold">NO MERCY</span>
+                  <span className="font-bold block border-b border-black/20 mb-1">Targets:</span>
+                  Sanctions: 5<br/>
+                  Approvals: 20<br/>
+                  <span className="text-red-600 font-bold">NO MERCY</span>
                 </div>
 
                 {/* SCREEN INNER */}
@@ -263,7 +258,6 @@ const App: React.FC = () => {
                   <div 
                     id="monitor-screen"
                     className="w-full h-full bg-[#f3f2f1] relative overflow-hidden flex flex-col"
-                    // REMOVED: filter styling that caused text blur
                   >
                     <GlitchEffect stress={stress} />
 
@@ -304,34 +298,54 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      {/* --- FIXED FOOTER CONTROLS --- */}
-      <div className="h-20 bg-[#0b0c0c] border-t-4 border-[#1d70b8] z-[200] flex items-center justify-between px-8 shrink-0 relative">
+      {/* --- SIMULATOR CONTROLS FOOTER --- */}
+      {/* Fixed height footer that pushes the 3D viewport up so nothing overlaps */}
+      {viewState === ViewState.GAMEPLAY && (
+        <div className="h-20 bg-[#0b0c0c] border-t-4 border-[#2a2a2a] flex items-center justify-between px-8 shrink-0 z-50 shadow-[0_-10px_20px_rgba(0,0,0,0.5)]">
           
-          <div className="flex items-center gap-4">
-            <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_#00ff00]"></div>
-            <span className="text-white/70 font-mono text-sm uppercase tracking-widest">Sim-Link Active</span>
+          {/* Left: Main Actions */}
+          <div className="flex items-center gap-8">
+             <div className="flex items-center gap-3">
+               <div className="w-3 h-3 rounded-full bg-red-600 animate-pulse shadow-[0_0_10px_#ff0000]" />
+               <span className="text-gray-400 text-xs font-mono uppercase tracking-[0.2em]">Live Feed Active</span>
+             </div>
+
+             <div className="h-8 w-px bg-gray-800" />
+
+             <div className="flex items-center gap-4">
+                <button
+                  onClick={togglePOV}
+                  className={`
+                    flex items-center gap-3 px-6 py-2 rounded-lg font-bold text-sm uppercase tracking-wide transition-all border-2
+                    ${isDeskMode 
+                      ? 'bg-[#1d70b8] border-[#1d70b8] text-white shadow-[0_0_20px_rgba(29,112,184,0.4)] hover:bg-[#005ea5]' 
+                      : 'bg-transparent border-gray-600 text-gray-300 hover:border-gray-400 hover:text-white'}
+                  `}
+                >
+                  {isDeskMode ? <Monitor size={18} /> : <Eye size={18} />}
+                  {isDeskMode ? "Focus Screen" : "Observe Claimant"}
+                </button>
+                
+                <div className="flex flex-col items-center justify-center opacity-50">
+                   <Keyboard size={16} className="text-gray-400 mb-1" />
+                   <span className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">[SPACEBAR]</span>
+                </div>
+             </div>
           </div>
 
-          {viewState === ViewState.GAMEPLAY && (
-            <div className="flex items-center gap-4">
-              <span className="text-white/50 text-xs text-center font-mono uppercase tracking-widest mr-4 hidden md:inline">
-                [SPACEBAR] TO SWIVEL
-              </span>
-              <button
-                onClick={togglePOV}
-                className={`
-                  flex items-center gap-3 px-6 py-2 rounded-full font-bold text-sm transition-all hover:scale-105 border-2 border-white/20
-                  ${isDeskMode ? 'bg-[#1d70b8] text-white shadow-[0_0_20px_rgba(29,112,184,0.5)]' : 'bg-white text-[#1d70b8]'}
-                `}
-              >
-                {isDeskMode ? <Monitor size={18} /> : <Eye size={18} />}
-                {isDeskMode ? "COMPUTER VIEW" : "DESK VIEW"}
-              </button>
-            </div>
-          )}
+          {/* Right: System Info */}
+          <div className="flex items-center gap-6">
+             <div className="text-right hidden sm:block">
+                <div className="text-[10px] text-gray-600 font-mono uppercase mb-1">Session ID</div>
+                <div className="text-xs text-gray-400 font-mono">SIM-8821-X</div>
+             </div>
+             <div className="w-12 h-12 border border-gray-800 rounded-full flex items-center justify-center bg-black shadow-inner">
+                <div className="w-10 h-10 rounded-full border-t-2 border-l-2 border-[#1d70b8] animate-spin" />
+             </div>
+          </div>
 
-          <div className="text-white/30 text-xs font-mono">v0.9.2</div>
-      </div>
+        </div>
+      )}
 
     </div>
   );
